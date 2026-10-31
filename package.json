@@ -1,0 +1,16 @@
+{
+	"name": "@sigrun/website",
+	"private": true,
+	"version": "0.0.0",
+	"description": "The sigrun.sh landing page",
+	"type": "module",
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"scripts": {
+		"sync": "node scripts/sync-themes.mjs",
+		"build": "node scripts/build.mjs",
+		"preview": "node scripts/build.mjs && node scripts/serve.mjs",
+		"test": "node scripts/build.mjs && node --test test/"
+	}
+}

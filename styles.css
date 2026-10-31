@@ -1,0 +1,274 @@
+/*
+ * Layout only. Every colour comes from themes.css (generated from the core's
+ * palette tokens), so this file has no literal colours except the two
+ * transparent overlays that sit on top of `--code`.
+ */
+
+:root {
+	--max: 44rem;
+	--radius: 10px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, sans-serif;
+	font-size: 17px;
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+main,
+footer {
+	max-width: var(--max);
+	margin: 0 auto;
+	padding-inline: 1.5rem;
+}
+
+main {
+	padding-top: clamp(2rem, 8vh, 5rem);
+	padding-bottom: 3rem;
+}
+
+footer {
+	padding-bottom: 3rem;
+}
+
+a {
+	color: inherit;
+	text-decoration-color: var(--border);
+	text-underline-offset: 0.2em;
+}
+
+a:hover {
+	text-decoration-color: var(--accent);
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+code {
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+		monospace;
+	font-size: 0.875em;
+	background: var(--code);
+}
+
+.masthead {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	margin-bottom: clamp(2.5rem, 7vh, 4.5rem);
+}
+
+.wordmark {
+	font-size: 1.0625rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	margin: 0;
+}
+
+.dot {
+	color: var(--accent);
+}
+
+.tagline {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9375rem;
+}
+
+.controls {
+	margin-left: auto;
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.chip {
+	background: var(--surface);
+	color: var(--muted);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	padding: 0.2rem 0.7rem;
+	font: inherit;
+	font-size: 0.75rem;
+	line-height: 1.6;
+	cursor: pointer;
+}
+
+.chip:hover {
+	color: var(--text);
+	border-color: var(--accent);
+}
+
+h1 {
+	font-size: clamp(1.75rem, 5vw, 2.5rem);
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	font-weight: 600;
+	margin: 0 0 1.25rem;
+	max-width: 24ch;
+}
+
+.lede {
+	font-size: clamp(1.0625rem, 2.2vw, 1.1875rem);
+	color: var(--muted);
+	margin: 0 0 2rem;
+	max-width: 40ch;
+}
+
+.install {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 0.75rem 0.875rem;
+	margin: 0 0 0.75rem;
+	font-size: 0.875rem;
+	overflow-x: auto;
+}
+
+.install code {
+	white-space: nowrap;
+	background: none;
+	font-size: inherit;
+}
+
+.amp {
+	color: var(--accent);
+}
+
+.runtime {
+	margin: 0 0 clamp(2.5rem, 7vh, 4rem);
+	color: var(--faint);
+	font-size: 0.8125rem;
+}
+
+h2 {
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.09em;
+	color: var(--faint);
+	margin: 0 0 1rem;
+}
+
+.points {
+	list-style: none;
+	margin: 0 0 clamp(2.5rem, 7vh, 4rem);
+	padding: 0;
+	display: grid;
+	gap: 1px;
+	background: var(--border);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	overflow: hidden;
+}
+
+.points li {
+	background: var(--surface);
+	padding: 1.125rem 1.25rem;
+}
+
+.points h3,
+.ways h3 {
+	margin: 0 0 0.25rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+}
+
+.points p,
+.ways p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9375rem;
+}
+
+.ways {
+	list-style: none;
+	margin: 0 0 clamp(2.5rem, 7vh, 4rem);
+	padding: 0;
+	display: grid;
+	gap: 1rem;
+}
+
+@media (min-width: 34rem) {
+	.ways {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.ways li {
+	display: flex;
+	flex-direction: column;
+	/* Without this a long `nowrap` command forces its own column wider and
+	   the three cards stop being equal. Let the code box scroll instead. */
+	min-width: 0;
+}
+
+.ways p {
+	margin-bottom: 0.5rem;
+	font-size: 0.875rem;
+}
+
+.ways code {
+	/* Pin the command to the bottom so the three columns line up even when
+	   the descriptions differ in length. Commands WRAP rather than scroll:
+	   a clipped `helm install ...` reads as broken, and these are short. */
+	margin-top: auto;
+	display: block;
+	min-width: 0;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	padding: 0.4rem 0.5rem;
+	border-radius: 5px;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+footer {
+	border-top: 1px solid var(--border);
+	padding-top: 1.25rem;
+	margin-top: clamp(2rem, 6vh, 3.5rem);
+	color: var(--faint);
+	font-size: 0.8125rem;
+}
+
+footer p {
+	margin: 0 0 0.5rem;
+	max-width: 54ch;
+}
+
+footer p:last-child {
+	margin-bottom: 0;
+}
+
+.affiliation {
+	color: var(--muted);
+}
+
+.links {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+	margin-bottom: 1.25rem;
+	font-size: 0.875rem;
+	color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	* {
+		transition: none !important;
+	}
+}
