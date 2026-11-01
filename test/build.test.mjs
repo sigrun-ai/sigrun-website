@@ -126,3 +126,7 @@ test("leads with multi-user", () => {
 	assert.ok(at("Multi-user") !== -1 && at("Multi-user") < at("Small core"));
 	assert.ok(at("Small core") < at("Every surface"));
 });
+
+test("MCP servers are config, not packages", () => {
+	assert.ok(!html.includes("MCP servers"), "MCP servers are URL config; the MCP extension is the package");
+});
