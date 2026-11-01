@@ -1,5 +1,6 @@
 /**
- * Snapshot the core's theme tokens into `src/themes.generated.mjs`.
+ * Snapshot the core's theme tokens into `src/themes.generated.mjs`, and
+ * the app's favicon set into `icons/`.
  *
  *   node scripts/sync-themes.mjs [--core <path>]
  *
@@ -18,7 +19,7 @@
  */
 
 import { execFile } from "node:child_process";
-import { writeFile } from "node:fs/promises";
+import { access, copyFile, mkdir, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve, isAbsolute } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
@@ -92,6 +93,32 @@ ${lines.join("\n\n")}
 `;
 }
 
+/** The app's favicon set, copied verbatim (no transcription) from core. */
+export const ICONS = ["favicon.svg", "favicon-32.png", "apple-touch-icon.png"];
+
+export function iconsSourceDir(corePath) {
+	return join(corePath, "webui", "public");
+}
+
+/**
+ * Copy every icon into `outDir`. All sources are checked before anything is
+ * written, so a missing or partial core checkout never leaves a half-updated
+ * snapshot behind.
+ */
+export async function syncIcons(corePath, outDir) {
+	const dir = iconsSourceDir(corePath);
+	for (const name of ICONS) {
+		const source = join(dir, name);
+		await access(source).catch(() => {
+			throw new Error(`no app icon at ${source}`);
+		});
+	}
+	await mkdir(outDir, { recursive: true });
+	for (const name of ICONS) {
+		await copyFile(join(dir, name), join(outDir, name));
+	}
+}
+
 const isMain =
 	process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 
@@ -100,4 +127,7 @@ if (isMain) {
 	const out = join(root, "src", "themes.generated.mjs");
 	await writeFile(out, await generate(corePath), "utf8");
 	console.log(`wrote ${out}\n  from ${themesSourcePath(corePath)}`);
+	const icons = join(root, "icons");
+	await syncIcons(corePath, icons);
+	console.log(`wrote ${icons}/ (${ICONS.length} icons)\n  from ${iconsSourceDir(corePath)}`);
 }

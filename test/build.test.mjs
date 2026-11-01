@@ -92,3 +92,19 @@ test("the 404 is self-contained and styled from the tokens", async () => {
 	assert.ok(page.includes(bg));
 	assert.ok(page.includes('href="/"'));
 });
+
+test("ships the app's favicon set", async () => {
+	for (const f of ["favicon.svg", "favicon-32.png", "apple-touch-icon.png"]) {
+		const built = await readFile(join(root, "dist", f));
+		assert.deepEqual(built, await readFile(join(root, "icons", f)), f);
+	}
+	assert.ok(!(await read("favicon.svg")).includes("M4.9 10.6"), "old S tile");
+});
+
+test("both pages link all three icons", async () => {
+	for (const page of [html, await read("404.html")]) {
+		assert.match(page, /rel="icon"[^>]*type="image\/svg\+xml"[^>]*href="\/favicon.svg"/);
+		assert.match(page, /rel="icon"[^>]*sizes="32x32"[^>]*href="\/favicon-32.png"/);
+		assert.match(page, /rel="apple-touch-icon"[^>]*href="\/apple-touch-icon.png"/);
+	}
+});

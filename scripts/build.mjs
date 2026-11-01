@@ -1,9 +1,9 @@
 /**
  * Build `dist/` for static hosting.
  *
- * Four output files, no bundler: the shell copied verbatim, plus
- * `themes.css` generated from the core's palette tokens so every colour on
- * the page is a token rather than a literal.
+ * No bundler: the shell copied verbatim, `themes.css` generated from the
+ * core's palette tokens (so every colour on the page is a token rather than
+ * a literal), a self-contained 404, and the app's icons from `icons/`.
  */
 
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
@@ -18,6 +18,7 @@ import {
 	PALETTES,
 	PALETTE_NAMES,
 } from "../src/themes.generated.mjs";
+import { ICONS } from "./sync-themes.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = join(root, "dist");
@@ -63,12 +64,10 @@ export function themeData() {
 	});
 }
 
-/** The favicon is the default accent — regenerated with the tokens. */
-function favicon() {
-	const accent = ACCENTS[DEFAULT_ACCENT].dark;
-	const ink = PALETTES[DEFAULT_PALETTE].dark.bg;
-	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect width="16" height="16" rx="3.5" fill="${accent}"/><path d="M4.9 10.6c.7.6 1.7.9 2.7.9 1.6 0 2.5-.6 2.5-1.6 0-1-.8-1.3-2.3-1.7-1.9-.5-3-1.1-3-2.6C4.8 4 6.1 3.1 8 3.1c1.3 0 2.3.4 2.9.9l-.8 1.3C9.5 4.8 8.8 4.6 8 4.6c-1.1 0-1.8.4-1.8 1 0 .7.7.9 2.2 1.3 1.9.5 3.1 1.1 3.1 2.8 0 2-1.6 3-3.9 3-1.4 0-2.7-.4-3.5-1.1z" fill="${ink}"/></svg>`;
-}
+/** The icon links both pages carry — the app's own set (see icons/). */
+const ICON_LINKS = `<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">`;
 
 function notFound() {
 	const palette = PALETTES[DEFAULT_PALETTE].dark;
@@ -80,7 +79,7 @@ function notFound() {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Not here — Sigrun</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+${ICON_LINKS}
 <style>
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:${palette.bg};color:${palette.text};font-family:ui-sans-serif,system-ui,sans-serif;text-align:center;padding:2rem;line-height:1.6}
 h1{font-size:1.5rem;margin:0 0 .5rem;letter-spacing:-.01em}
@@ -103,6 +102,9 @@ await mkdir(dist, { recursive: true });
 for (const file of STATIC) {
 	await copyFile(join(root, file), join(dist, file));
 }
+for (const icon of ICONS) {
+	await copyFile(join(root, "icons", icon), join(dist, icon));
+}
 
 const html = (await readFile(join(root, "index.html"), "utf8"))
 	.replaceAll("%PALETTE%", DEFAULT_PALETTE)
@@ -111,7 +113,6 @@ const html = (await readFile(join(root, "index.html"), "utf8"))
 
 await writeFile(join(dist, "index.html"), html, "utf8");
 await writeFile(join(dist, "themes.css"), themesCss(), "utf8");
-await writeFile(join(dist, "favicon.svg"), favicon(), "utf8");
 await writeFile(join(dist, "404.html"), notFound(), "utf8");
 
-console.log(`built dist/ (${STATIC.length + 3} files)`);
+console.log(`built dist/ (${STATIC.length + ICONS.length + 2} files)`);

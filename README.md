@@ -5,14 +5,17 @@ durable, multi-user personal-assistant server.
 
 Static, no framework, no bundler. Four files out of `npm run build`:
 `index.html`, `styles.css`, `app.js`, `themes.css` (plus a `404.html` and
-`favicon.svg`).
+the app's three icons).
 
 ## Colours come from the core
 
 The palettes and accents are **not** duplicated here. `npm run sync` reads
 `shared/src/themes.ts` out of a sibling sigrun checkout and regenerates
 `src/themes.generated.mjs`; `npm run build` turns that into `themes.css`
-custom properties. `npm test` fails if the snapshot is stale.
+custom properties. The favicon set (`favicon.svg`, `favicon-32.png`,
+`apple-touch-icon.png`) is snapshotted the same way: `npm run sync` copies
+it from the core's `webui/public/` into `icons/`, so the site's tab icon is
+the app's. `npm test` fails if either snapshot is stale.
 
 ```sh
 npm run sync     # regenerate the token snapshot from ../sigrun

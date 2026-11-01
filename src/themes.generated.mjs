@@ -1,5 +1,5 @@
 // GENERATED — do not edit by hand. Run: npm run sync
-// Source: sigrun core @ 8f408db56cc3 — sigrun/shared/src/themes.ts
+// Source: sigrun core @ 7cd9ed73b917 — sigrun/shared/src/themes.ts
 //
 // Snapshot, not a dependency: the build has no workspace link to core.
 // See scripts/sync-themes.mjs. test/themes-sync.test.mjs fails on drift.
