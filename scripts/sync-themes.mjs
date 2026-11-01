@@ -3,21 +3,23 @@
  *
  *   node scripts/sync-themes.mjs [--core <path>]
  *
- * WHY A SNAPSHOT AND NOT AN npm DEPENDENCY: `@sigrun/shared` is published
- * WITHOUT its `dist/` (verified for 0.2.0, 0.2.1 and 0.3.0), so
- * `import "@sigrun/shared/themes"` fails for anyone installing it
- * standalone. `@sigrun/sigrun` only works because npm bundles the nested
- * `node_modules/@sigrun/shared/dist` inside core's own tarball. Until that
- * publish is fixed, the site cannot depend on the package.
+ * Source of truth is `shared/src/themes.ts` in the sigrun core repo — the
+ * same module the webui and tui read — so the site cannot drift from the
+ * product's colours. The values are not transcribed: this imports the real
+ * module (Node strips the types natively) and re-emits the exported data as
+ * plain ESM.
  *
- * The values are still not transcribed: this imports `shared/src/themes.ts`
- * directly (Node strips the types natively) and re-emits the exported data
- * as plain ESM. One source of truth, one mechanical transform.
+ * Why a committed snapshot rather than an npm dependency: the site has no
+ * build-time network access in CI and no workspace link to core, so a plain
+ * `@sigrun/shared` dependency would either need a network install or a
+ * checkout of the core repo. A committed snapshot keeps the build hermetic;
+ * `test/themes-sync.test.mjs` fails on drift whenever a core checkout is
+ * available.
  */
 
 import { execFile } from "node:child_process";
 import { writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve, isAbsolute } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 
@@ -49,12 +51,17 @@ export function themesSourcePath(corePath) {
 /**
  * Read the core's themes module and return the emitted ESM source.
  * Throws if the checkout (or its themes.ts) is missing.
+ *
+ * The provenance line is deliberately MACHINE-INDEPENDENT: a relative path
+ * plus a commit id. An absolute path would make the file differ between the
+ * machine that synced it and CI, turning the drift test into noise.
  */
 export async function generate(corePath) {
 	const source = themesSourcePath(corePath);
 	const mod = await import(pathToFileURL(source).href);
 
-	let provenance = source;
+	let provenance = relative(root, source).replaceAll("\\", "/");
+	if (isAbsolute(provenance)) provenance = "sigrun/" + "shared/src/themes.ts";
 	try {
 		const { stdout } = await run("git", [
 			"-C",
@@ -63,9 +70,9 @@ export async function generate(corePath) {
 			"--short=12",
 			"HEAD",
 		]);
-		provenance = `${source} (sigrun core @ ${stdout.trim()})`;
+		provenance = `sigrun core @ ${stdout.trim()} — ${relative(resolve(root, ".."), source).replaceAll("\\", "/")}`;
 	} catch {
-		// Not a git checkout — the path alone is the provenance.
+		// Not a git checkout — the relative path alone is the provenance.
 	}
 
 	const lines = KEYS.map((key) => {
@@ -78,9 +85,8 @@ export async function generate(corePath) {
 	return `// GENERATED — do not edit by hand. Run: npm run sync
 // Source: ${provenance}
 //
-// Why a snapshot instead of importing @sigrun/shared: the published
-// 0.2.0/0.2.1/0.3.0 tarballs ship no dist/, so the package cannot be
-// imported standalone. See scripts/sync-themes.mjs.
+// Snapshot, not a dependency: the build has no workspace link to core.
+// See scripts/sync-themes.mjs. test/themes-sync.test.mjs fails on drift.
 
 ${lines.join("\n\n")}
 `;

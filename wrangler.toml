@@ -1,5 +1,11 @@
-# Cloudflare Pages. Build: `npm run build`, output: `dist`.
-# The custom domain (sigrun.sh) is attached in the dashboard, not here.
-name = "sigrun-site"
+# Cloudflare Pages.
+#
+# `name` MUST equal the Pages project name — the dashboard errors with
+# "Update wrangler.toml in your repo to keep settings consistent" when it
+# doesn't. If the project is called something else, change this line (or
+# rename the project) rather than deleting the file: `pages_build_output_dir`
+# is what lets Cloudflare pick up the output directory without a dashboard
+# field, which the Git-integration flow does not expose.
+name = "sigrun-website"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-10-01"

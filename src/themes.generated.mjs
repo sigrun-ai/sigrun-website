@@ -1,9 +1,8 @@
 // GENERATED — do not edit by hand. Run: npm run sync
-// Source: /home/michaelmacleod/repos/sigrun/shared/src/themes.ts (sigrun core @ ea0f31eff20c)
+// Source: sigrun core @ 8f408db56cc3 — sigrun/shared/src/themes.ts
 //
-// Why a snapshot instead of importing @sigrun/shared: the published
-// 0.2.0/0.2.1/0.3.0 tarballs ship no dist/, so the package cannot be
-// imported standalone. See scripts/sync-themes.mjs.
+// Snapshot, not a dependency: the build has no workspace link to core.
+// See scripts/sync-themes.mjs. test/themes-sync.test.mjs fails on drift.
 
 export const PALETTES = {
 	"fjord": {
