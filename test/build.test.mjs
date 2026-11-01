@@ -108,3 +108,21 @@ test("both pages link all three icons", async () => {
 		assert.match(page, /rel="apple-touch-icon"[^>]*href="\/apple-touch-icon.png"/);
 	}
 });
+
+test("never names other agents or unshipped chat platforms", () => {
+	for (const word of ["hermes", "openclaw", "claw", "telegram", "slack", "whatsapp", "signal"]) {
+		assert.ok(!html.toLowerCase().includes(word), word);
+	}
+});
+
+test("durable only as pi-durable", () => {
+	assert.equal(html.replaceAll("pi-durable", "").toLowerCase().includes("durable"), false);
+});
+
+test("leads with multi-user", () => {
+	assert.match(html.match(/<title>(.*)<\/title>/)[1], /share/i);
+	const body = html.slice(html.indexOf("<main>"));
+	const at = (heading) => body.indexOf(`<h3>${heading}`);
+	assert.ok(at("Multi-user") !== -1 && at("Multi-user") < at("Small core"));
+	assert.ok(at("Small core") < at("Every surface"));
+});

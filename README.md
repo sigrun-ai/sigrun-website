@@ -1,7 +1,7 @@
 # sigrun.sh
 
 The landing page for [sigrun](https://github.com/sigrun-ai/sigrun) — a
-durable, multi-user personal-assistant server.
+self-hosted, multi-user personal-assistant server.
 
 Static, no framework, no bundler. Four files out of `npm run build`:
 `index.html`, `styles.css`, `app.js`, `themes.css` (plus a `404.html` and

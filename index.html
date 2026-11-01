@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sigrun — durable, multi-user personal-assistant server</title>
-<meta name="description" content="Sigrun is a durable, multi-user personal-assistant server. One agent loop serves a web UI, a terminal UI, an HTTP API, and chat channels, over long-lived conversations stored in SQLite.">
+<title>Sigrun — a self-hosted assistant your household can share</title>
+<meta name="description" content="Sigrun is a self-hosted personal-assistant server for more than one person. Everyone gets their own account, tools, and sandboxed shell. The core stays small; memory, model providers, and integrations are packages you choose.">
 <meta name="color-scheme" content="dark light">
 <link rel="canonical" href="https://sigrun.sh/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Sigrun — durable, multi-user personal-assistant server">
-<meta property="og:description" content="One agent loop. Web UI, terminal, HTTP API, chat channels. Conversations survive restarts.">
+<meta property="og:title" content="Sigrun — a self-hosted assistant your household can share">
+<meta property="og:description" content="One self-hosted assistant, many users, each with their own account and sandbox. Small core, swappable parts.">
 <meta property="og:url" content="https://sigrun.sh/">
 <meta name="twitter:card" content="summary">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -23,7 +23,7 @@
 
 <header class="masthead">
 	<p class="wordmark">Sigrun<span class="dot">.</span></p>
-	<p class="tagline">durable personal assistant</p>
+	<p class="tagline">the assistant your household shares</p>
 	<div class="controls">
 		<button class="chip" type="button" data-palette-cycle aria-label="Cycle colour palette">
 			<span data-palette-label>Polar Night</span>
@@ -32,34 +32,36 @@
 	</div>
 </header>
 
-<h1>Your assistant should outlive the terminal you started it in.</h1>
+<h1>One assistant. Everyone gets their own.</h1>
 
 <p class="lede">
-	Sigrun is a durable, multi-user personal-assistant server. One agent loop
-	serves a web UI, a terminal UI, an HTTP API, and chat channels — over
-	long-lived conversations stored in SQLite.
+	Sigrun is a self-hosted personal-assistant server built for more than one
+	person. Each user signs in to their own conversations, settings,
+	credentials, and tools, and their agent runs in its own sandbox. The core
+	stays small: memory, model providers, and integrations are packages you
+	pick.
 </p>
 
 <p class="install"><code>npm i -g @sigrun/sigrun <span class="amp">&amp;&amp;</span> sigrun run</code></p>
 <p class="runtime">Node &gt;=22.19.0</p>
 
-<h2>What that buys you</h2>
+<h2>What makes it different</h2>
 <ul class="points">
 	<li>
-		<h3>Durable</h3>
-		<p>Conversations, submissions, and schedules live in one SQLite database. Restart the process and the run resumes where it stopped.</p>
-	</li>
-	<li>
-		<h3>One loop, many surfaces</h3>
-		<p>Web UI, terminal UI, HTTP API, and chat channels are all thin clients over the same durable conversations. The agent loop exists exactly once.</p>
-	</li>
-	<li>
-		<h3>Replaceable parts</h3>
-		<p>Memory, integrations, tools, providers, and login are extensions — ordinary npm packages. Core does not privilege one implementation of any of them.</p>
-	</li>
-	<li>
 		<h3>Multi-user, for real</h3>
-		<p>Real authentication plus a per-user execution jail. Sigrun fails closed when required isolation is unavailable rather than running everyone with full host access.</p>
+		<p>Invites, API tokens, and OIDC, GitHub, or Discord sign-in. Each person's agent runs in a Landlock jail and can't read sigrun's files, its environment, or anyone else's. When the jail isn't available, a second user is refused — never quietly let in.</p>
+	</li>
+	<li>
+		<h3>Small core, your parts</h3>
+		<p>Memory, model providers, tools, MCP servers, and login are ordinary npm packages you can swap. A broken one is quarantined, not a failed boot. A fresh install already ships codemode, MCP, tool search, sign-in, and a chat gateway built in.</p>
+	</li>
+	<li>
+		<h3>Every surface, one conversation</h3>
+		<p>The web UI, terminal UI, HTTP API, and scheduled jobs are thin clients on the same conversations. Start in the browser, pick it up in the terminal mid-run. Chat-platform adapters plug into the built-in gateway.</p>
+	</li>
+	<li>
+		<h3>Picks up where it stopped</h3>
+		<p>Conversations, runs, and schedules live in one SQLite database, on pi-durable. A restart resumes the run.</p>
 	</li>
 </ul>
 
