@@ -1,11 +1,17 @@
-# Cloudflare Pages.
+# Cloudflare Pages — Git integration.
 #
-# `name` MUST equal the Pages project name — the dashboard errors with
-# "Update wrangler.toml in your repo to keep settings consistent" when it
-# doesn't. If the project is called something else, change this line (or
-# rename the project) rather than deleting the file: `pages_build_output_dir`
-# is what lets Cloudflare pick up the output directory without a dashboard
-# field, which the Git-integration flow does not expose.
+# `name` MUST match the Pages project name (`sigrun-website`). A mismatch is
+# exactly what produces "Update wrangler.toml in your repo to keep settings
+# consistent" — Cloudflare is telling you the value it wants.
+#
+# `pages_build_output_dir` is why the dashboard has no editable "Build output
+# directory" field: once this key exists here, the file becomes the source of
+# truth and that field is shown read-only. Keep the dashboard build command as
+# `npm run build`.
+#
+# Deploying as a WORKER instead of Pages? Drop `pages_build_output_dir` and use
+# an `assets` table with `directory = "./dist"` and
+# `not_found_handling = "404-page"`. The two keys are not interchangeable.
 name = "sigrun-website"
-pages_build_output_dir = "dist"
+pages_build_output_dir = "./dist"
 compatibility_date = "2026-10-01"
