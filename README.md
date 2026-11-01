@@ -24,18 +24,36 @@ npm test         # build, then assert the artefact
 `npm run sync` looks for the core at `../sigrun`; override with
 `--core <path>` or `SIGRUN_CORE`.
 
-> **Why a snapshot and not an npm dependency?** `@sigrun/shared` 0.2.0,
-> 0.2.1 and 0.3.0 were published without their `dist/` (the `files`
-> whitelist names it, but nothing builds it before `npm publish`), so
-> `import "@sigrun/shared/themes"` fails for anyone installing the package
-> standalone. `@sigrun/sigrun` only works because npm bundles a nested
-> `node_modules/@sigrun/shared/dist` inside core's own tarball. When that
-> publish is fixed, this repo can drop the snapshot for a plain dependency.
+> **Why a snapshot and not an npm dependency?** `@sigrun/shared` 0.2.0
+> through 0.4.0 were published without their `dist/`, so
+> `import "@sigrun/shared/themes"` failed for anyone installing the package
+> standalone. **Fixed in 0.4.1** (`prepublishOnly: npm run build`) and
+> verified live at 0.4.2. The snapshot is kept anyway because the CI build
+> has no workspace link to the core checkout; `npm run sync` is a
+> maintainer step, not a build step.
 
 ## Deploying
 
-Cloudflare Pages, build command `npm run build`, output directory `dist`.
-`wrangler.toml` pins the project name; the custom domain is `sigrun.sh`.
+Cloudflare **Workers** with static assets (`Workers & Pages → sigrun-website`).
+Build command `npm run build`, deploy command `npx wrangler deploy`.
+
+There is no "build output directory" field in a Worker's settings — the
+assets directory in `wrangler.toml` is that setting, and the file is its only
+source of truth:
+
+```toml
+name = "sigrun-website"   # must equal the Worker name
+[assets]
+directory = "./dist"
+not_found_handling = "404-page"
+```
+
+A name mismatch produces "Update wrangler.toml in your repo to keep settings
+consistent". Verified locally with `npx wrangler@4 deploy --dry-run` (reads
+all six files from `dist/`) and `npx wrangler@4 dev` (200 on `/` and
+`/themes.css`, 404 + the custom page on an unmatched path).
+
+The custom domain is `sigrun.sh`.
 
 Note that `.sh` is a shell-script TLD by convention, so `/` must keep
 serving the site — there is deliberately no `curl … | sh` installer here

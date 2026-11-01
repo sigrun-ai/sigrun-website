@@ -1,17 +1,20 @@
-# Cloudflare Pages — Git integration.
+# Cloudflare Worker with static assets.
 #
-# `name` MUST match the Pages project name (`sigrun-website`). A mismatch is
-# exactly what produces "Update wrangler.toml in your repo to keep settings
-# consistent" — Cloudflare is telling you the value it wants.
+# This project is a WORKER, not a Pages project (Workers & Pages →
+# sigrun-website → Production). That is why the dashboard has no "Build
+# output directory" field: a Worker's build settings are only Build command,
+# Deploy command, Root directory and Build variables. The assets directory
+# below IS the output directory, and this file is its only source of truth.
 #
-# `pages_build_output_dir` is why the dashboard has no editable "Build output
-# directory" field: once this key exists here, the file becomes the source of
-# truth and that field is shown read-only. Keep the dashboard build command as
-# `npm run build`.
-#
-# Deploying as a WORKER instead of Pages? Drop `pages_build_output_dir` and use
-# an `assets` table with `directory = "./dist"` and
-# `not_found_handling = "404-page"`. The two keys are not interchangeable.
+# `name` must equal the Worker name. A mismatch produces "Update
+# wrangler.toml in your repo to keep settings consistent" — the warning is
+# literally naming the value it wants.
 name = "sigrun-website"
-pages_build_output_dir = "./dist"
 compatibility_date = "2026-10-01"
+
+[assets]
+# `npm run build` writes dist/: index.html, styles.css, app.js, themes.css,
+# 404.html, favicon.svg.
+directory = "./dist"
+# Serve dist/404.html with a real 404 status for unmatched paths.
+not_found_handling = "404-page"
